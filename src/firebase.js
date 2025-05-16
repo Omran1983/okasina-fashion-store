@@ -1,26 +1,8 @@
 // src/firebase.js
 import { initializeApp } from 'firebase/app';
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut
-} from 'firebase/auth';
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  doc,
-  updateDoc,
-  deleteDoc
-} from 'firebase/firestore';
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from 'firebase/storage';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyC4f1A8FgW7TwStjWQlhfre3vhD7uEtb4A",
@@ -35,9 +17,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
+
 const provider = new GoogleAuthProvider();
 
-// Auth
 export const loginWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
@@ -52,16 +34,14 @@ export const logout = async () => {
   await signOut(auth);
 };
 
-// Products
-const productsCollection = collection(db, 'products');
-
+// Products Collection
 export const getProducts = async () => {
-  const snapshot = await getDocs(productsCollection);
+  const snapshot = await getDocs(collection(db, 'products'));
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
 
 export const addProduct = async (product) => {
-  await addDoc(productsCollection, product);
+  await addDoc(collection(db, 'products'), product);
 };
 
 export const updateProduct = async (id, updatedData) => {
@@ -77,6 +57,18 @@ export const deleteProduct = async (id) => {
 // Image Upload
 export const uploadImage = async (file) => {
   const storageRef = ref(storage, `product-images/${file.name}`);
-  await uploadBytes(storageRef, file);
-  return await getDownloadURL(storageRef);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      "state_changed",
+      snapshot => {},
+      error => {
+        reject(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then(url => resolve(url));
+      }
+    );
+  });
 };

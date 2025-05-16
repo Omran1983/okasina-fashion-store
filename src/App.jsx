@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-// Firebase imports
+import React, { useState, useEffect } from 'react';
 import {
   auth,
-  loginWithGoogle,
-  logout as firebaseLogout,
   getProducts as fetchProducts,
   addProduct as saveProduct,
+  loginWithGoogle,
+  logout as firebaseLogout,
   uploadImage
 } from './firebase';
 
@@ -26,9 +24,6 @@ export default function App() {
   const [productCategory, setProductCategory] = useState('Women');
   const [productSize, setProductSize] = useState('S');
   const [uploadedImages, setUploadedImages] = useState([]);
-  const fileInputRef = useRef(null);
-
-  // Products data
   const [products, setProducts] = useState([]);
 
   // Load user and products
@@ -107,88 +102,6 @@ export default function App() {
 
   return (
     <div className="bg-gray-50 min-h-screen font-sans" style={{ fontFamily: "'Poppins', sans-serif" }}>
-      {/* CSS Styles */}
-      <style>
-        {`
-          :root {
-            --primary: #7c3aed;
-            --secondary: #f43f5e;
-            --dark: #1e293b;
-            --light: #f8fafc;
-          }
-
-          .gradient-bg {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-          }
-
-          body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-          }
-
-          .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-          }
-
-          .size-selector input:checked + label {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
-          }
-
-          .fab {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            z-index: 100;
-          }
-
-          .fab:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-          }
-
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
-
-          @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(124, 58, 237, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
-          }
-
-          ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-          }
-
-          ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-          }
-
-          ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-          }
-
-          ::-webkit-scrollbar-thumb:hover {
-            background: #6d28d9;
-          }
-        `}
-      </style>
-
       {/* Customer View */}
       {view === 'customer' && (
         <div id="customer-view">
@@ -313,14 +226,14 @@ export default function App() {
                   filteredProducts.slice(0, 8).map((product) => (
                     <div key={product.id} className="product-card bg-white rounded-lg overflow-hidden group">
                       <div className="h-64 overflow-hidden">
-                        <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                        <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
                       </div>
                       <div className="p-4">
                         <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
                         <p className="text-gray-500 text-sm mt-1">Available in sizes: S - 10XL</p>
                         <div className="flex justify-between items-center mt-3">
                           <span className="text-lg font-bold text-purple-600">Rs {product.price}</span>
-                          <span className={`text-sm ${product.status === 'Active' ? 'text-green-600' : 'text-red-600'}`}>
+                          <span className={`text-sm font-medium ${product.status === 'Active' ? 'text-green-600' : 'text-red-600'}`}>
                             {product.stock} in stock
                           </span>
                         </div>
@@ -342,7 +255,7 @@ export default function App() {
                 {[
                   { name: "Priya M.", role: "First-time Buyer", review: "The virtual try-on feature helped me choose the perfect outfit. The quality is amazing!" },
                   { name: "Anita R.", role: "Fashion Enthusiast", review: "Best shopping experience ever! Fast delivery and amazing support team 😍" },
-                  { name: "Sarah T.", role: "Regular Customer", review: "I was hesitant to buy online, but their virtual try-on feature helped me choose the perfect size." }
+                  { name: "Sarah T.", role: "Regular Customer", review: "I was hesitant to buy online, but their virtual try-on feature helped me choose the perfect size."
                 ].map((testimonial, idx) => (
                   <div key={idx} className="bg-white p-6 rounded-lg shadow">
                     <div className="flex items-center mb-4">
@@ -379,7 +292,7 @@ export default function App() {
                     <i className="fas fa-mobile-alt text-xl"></i>
                   </div>
                   <p className="ml-16 text-lg leading-6 font-medium text-gray-900">Virtual Try-On</p>
-                  <p className="ml-16 text-base text-gray-500">See how clothes look on you before buying with our AR try-on feature.</p>
+                  <p className="ml-16 text-base text-gray-500">See how clothes look on you before buying with our augmented reality try-on feature.</p>
                 </div>
                 <div className="bg-gray-50 p-6 rounded-lg">
                   <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-purple-500 text-white">
@@ -444,7 +357,7 @@ export default function App() {
       )}
 
       {/* Admin View */}
-      {view === 'admin' && (
+      {view === 'admin' && user && (
         <div id="admin-view" className="min-h-screen bg-gray-100">
           {/* Sidebar */}
           <div className={`admin-sidebar fixed top-0 left-0 h-full bg-gray-900 text-white z-50 ${isSidebarCollapsed ? 'w-16' : 'w-64'} transition-all`}>
@@ -481,13 +394,19 @@ export default function App() {
                   </a>
                 </li>
                 <li>
+                  <a href="#" onClick={() => setActiveTab('orders')} className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:text-white hover:bg-gray-700 group">
+                    <i className="fas fa-shopping-cart mr-3"></i>
+                    <span className={!isSidebarCollapsed ? '' : 'hidden'}>Orders</span>
+                  </a>
+                </li>
+                <li>
                   <a href="#" onClick={() => setView('customer')} className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:text-white hover:bg-gray-700 group">
                     <i className="fas fa-store mr-3"></i>
                     <span className={!isSidebarCollapsed ? '' : 'hidden'}>Storefront</span>
                   </a>
                 </li>
                 <li>
-                  <a href="#" onClick={logout} className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:text-white hover:bg-gray-700 group">
+                  <a href="#" onClick={firebaseLogout} className="flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:text-white hover:bg-gray-700 group">
                     <i className="fas fa-sign-out-alt mr-3"></i>
                     <span className={!isSidebarCollapsed ? '' : 'hidden'}>Logout</span>
                   </a>
@@ -510,7 +429,7 @@ export default function App() {
               <div className="p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Overview</h2>
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                  <div className="bg-white overflow-hidden shadow rounded-lg">
+                  <div className="bg-white overflow-hidden shadow rounded-lg report-card">
                     <div className="px-4 py-5 sm:p-6">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 bg-purple-100 p-3 rounded-lg">
@@ -519,7 +438,7 @@ export default function App() {
                         <div className="ml-5 w-0 flex-1">
                           <dl>
                             <dt className="text-sm font-medium text-gray-500 truncate">Today's Sales</dt>
-                            <dd className="text-lg font-medium text-gray-900">Rs 24,500</dd>
+                            <dd className="text-lg font-medium text-gray-900">Rs 124,500</dd>
                           </dl>
                         </div>
                       </div>
@@ -550,7 +469,7 @@ export default function App() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {products.slice(0, 6).map((product, idx) => (
+                      {products.map((product, idx) => (
                         <tr key={idx}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
@@ -558,16 +477,58 @@ export default function App() {
                                 <img src={product.image} alt={product.name} className="h-10 w-10 rounded" />
                               </div>
                               <div className="ml-4">
-                                <div className="text-sm font-medium">{product.name}</div>
+                                <div className="text-sm font-medium text-gray-900">{product.name}</div>
                                 <div className="text-sm text-gray-500">#{product.id}</div>
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rs {product.price}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.stock}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 whitespace-nowrap">
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{product.status}</span>
                           </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div className="flex space-x-2">
+                              <a href="#" className="text-purple-600 hover:text-purple-900"><i className="fas fa-edit"></i></a>
+                              <a href="#" onClick={() => deleteProductFromDb(product.id)} className="text-pink-600 hover:text-pink-900"><i className="fas fa-trash"></i></a>
+                              <a href="#" className="text-gray-600 hover:text-gray-900"><i className="fas fa-eye"></i></a>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Orders Tab */}
+            {activeTab === 'orders' && (
+              <div className="p-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Recent Orders</h2>
+                <div className="bg-white shadow rounded-lg overflow-hidden">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order #</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {[
+                        { id: '#1001', customer: 'John Doe', status: 'Completed', amount: 'Rs 4,299' },
+                        { id: '#1000', customer: 'Jane Smith', status: 'Processing', amount: 'Rs 2,899' },
+                        { id: '#999', customer: 'Robert Johnson', status: 'Shipped', amount: 'Rs 5,499' }
+                      ].map((order, idx) => (
+                        <tr key={idx}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.id}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.customer}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{order.status}</span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.amount}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -603,7 +564,7 @@ export default function App() {
             <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">Add New Product</h3>
+                <h3 className="text-lg font-medium text-gray-900">Add New Product</h3>
                 <div className="mt-4 space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Product Name</label>
@@ -630,7 +591,7 @@ export default function App() {
                         <div className="text-sm text-gray-600">
                           <label htmlFor="file-upload" className="relative cursor-pointer font-medium text-purple-600 hover:text-purple-900">
                             <span>Upload files</span>
-                            <input id="file-upload" name="file-upload" type="file" multiple onChange={handleImageUpload} ref={fileInputRef} className="sr-only" />
+                            <input id="file-upload" name="file-upload" type="file" multiple onChange={handleImageUpload} className="sr-only" />
                           </label>
                           <p className="pl-1">or drag and drop</p>
                         </div>
@@ -648,14 +609,12 @@ export default function App() {
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   onClick={handleAddProduct}
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-purple-600 text-base font-medium text-white hover:bg-purple-700 sm:ml-3 sm:w-auto"
-                >
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-purple-600 text-base font-medium text-white hover:bg-purple-700 sm:ml-3 sm:w-auto">
                   Save
                 </button>
                 <button
                   onClick={closeModal}
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                >
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto">
                   Cancel
                 </button>
               </div>
