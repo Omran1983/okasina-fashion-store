@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 function App() {
   const [selectedSize, setSelectedSize] = useState('');
@@ -88,6 +89,18 @@ export default App; = [
           </div>
         ))}
       </div>
+	  function App() {
+  // ... existing state and logic ...
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Your existing header, content, footer */}
+      
+      {/* Add Speed Insights at the bottom */}
+      <SpeedInsights />
+    </div>
+  );
+}
     </div>
   );
 }
